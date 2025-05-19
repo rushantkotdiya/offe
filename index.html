@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login / Sign Up - Edu Meeting</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+     background: url('./img/bg.jpg') center center/cover no-repeat fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .wrapper {
+      background:rgba(0, 0, 0, 0.223);
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .wrapper h2 {
+      text-align: center;
+      margin-bottom: 1.2rem;
+      color: #e32f2f;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: transparent;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      background-color: #e32f2f;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #b71c1c;
+    }
+
+    .toggle-link {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .toggle-link a {
+      color: #e32f2f;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 480px) {
+      .wrapper {
+        padding:10px ;
+        margin: 15px;
+      }
+       input {
+      width: 90%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <h2 id="formTitle">Login</h2>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginUsername">Username:</label>
+        <input type="text" id="loginUsername" required />
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password:</label>
+        <input type="password" id="loginPassword" required />
+      </div>
+      <button type="submit">Login</button>
+      <div class="error" id="loginError"></div>
+    </form>
+
+    <!-- SIGN UP FORM -->
+    <form id="signupForm" style="display: none;">
+      <div class="form-group">
+        <label for="signupUsername">New Username:</label>
+        <input type="text" id="signupUsername" required />
+      </div>
+      <div class="form-group">
+        <label for="signupPassword">New Password:</label>
+        <input type="password" id="signupPassword" required />
+      </div>
+      <button type="submit">Sign Up</button>
+      <div class="error" id="signupError"></div>
+    </form>
+
+    <!-- TOGGLE LINK -->
+    <div class="toggle-link">
+      <span id="toggleText">Don't have an account? <a id="toggleLink">Sign Up</a></span>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const toggleLink = document.getElementById("toggleLink");
+    const formTitle = document.getElementById("formTitle");
+    const toggleText = document.getElementById("toggleText");
+
+    let users = [
+      { username: "admin", password: "1234" }
+    ];
+
+    toggleLink.addEventListener("click", () => {
+      if (loginForm.style.display === "none") {
+        // Show login
+        loginForm.style.display = "block";
+        signupForm.style.display = "none";
+        formTitle.textContent = "Login";
+        toggleText.innerHTML = `Don't have an account? <a id="toggleLink">Sign Up</a>`;
+      } else {
+        // Show signup
+        loginForm.style.display = "none";
+        signupForm.style.display = "block";
+        formTitle.textContent = "Sign Up";
+        toggleText.innerHTML = `Already have an account? <a id="toggleLink">Login</a>`;
+      }
+      // Re-bind toggle link
+      document.getElementById("toggleLink").addEventListener("click", arguments.callee);
+    });
+
+    loginForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const errorMsg = document.getElementById("loginError");
+
+      const user = users.find(u => u.username === username && u.password === password);
+
+      if (user) {
+        window.location.href = "home.html";
+      } else {
+        errorMsg.textContent = "Invalid username or password.";
+      }
+    });
+
+    signupForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const username = document.getElementById("signupUsername").value.trim();
+      const password = document.getElementById("signupPassword").value.trim();
+      const errorMsg = document.getElementById("signupError");
+
+      const exists = users.find(u => u.username === username);
+
+      if (exists) {
+        errorMsg.textContent = "Username already taken.";
+      } else if (username.length < 3 || password.length < 3) {
+        errorMsg.textContent = "Username and password must be at least 3 characters.";
+      } else {
+        users.push({ username, password });
+        alert("Signup successful! Please log in.");
+        signupForm.reset();
+        toggleLink.click(); // Switch back to login
+      }
+    });
+  </script>
+</body>
+</html>
